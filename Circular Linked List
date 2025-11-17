@@ -1,0 +1,219 @@
+#include<iostream>
+using namespace std;
+class Node
+{
+private:
+int element;
+Node* nextptr;
+public:
+Node(int e, Node* next = nullptr) :element(e), nextptr(next) {
+
+};
+int retrive()
+{
+return element;
+}
+Node* r_nextptr()
+{
+return nextptr;
+}
+void setnext(Node* n)
+{
+nextptr = n;
+}
+friend class  Circular;
+};
+class Circular
+{
+private:
+Node* listhead=nullptr;
+public:
+void size( )
+{
+int c=0;
+Node* p = listhead;
+do
+{
+c++;
+p = p->nextptr;
+} while (p != listhead);
+cout << "\n Total elements in the list are: " << c;
+}
+void count(int i)
+{
+int c = 0;
+Node* p = listhead;
+do
+{
+if (p->retrive() == i)
+{
+c++;
+}
+p = p->nextptr;
+} while (p != listhead);
+cout << "\n the number "<<i<<"appeared is the list " << c<<" times !";
+}
+bool empty()
+{
+return (listhead == nullptr);
+}
+int front()
+{
+return listhead->retrive();
+}
+int end()
+{
+Node* p = head();
+while (p->nextptr != head())
+{
+p = p->nextptr;
+}
+return p->retrive();
+}
+Node* head()
+{
+return listhead;
+}
+void push_front(int n)
+{
+Node* p = new Node(n);
+if (empty())
+{
+p->setnext(p);
+listhead = p;
+return;
+}
+else
+{
+
+Node* last=listhead;
+while(last->nextptr!=head())
+{
+last = last->nextptr;
+
+}
+p->setnext(head());///at this point it is at the last head means the first node
+last->setnext(p);
+listhead = p;
+}
+
+}
+void display()
+{
+cout << endl;
+Node* p = listhead;
+do
+{
+cout << p->retrive()<<"  ";
+p = p->nextptr;
+} while (p != listhead);
+}
+void pop_front()
+{
+if (empty())
+{
+throw "Underflow";
+}
+if (listhead->nextptr == listhead)
+{
+delete listhead;
+listhead = nullptr;
+}
+Node* ptr = listhead;
+Node* last = listhead;
+while(last->nextptr!=head())
+{
+last = last->nextptr;
+}
+listhead = listhead->nextptr;
+last->setnext(listhead);
+delete ptr;
+ptr = nullptr;
+}
+void pop_end()
+{
+if (empty())
+{
+throw"Underflow";
+}
+if (listhead->nextptr == listhead)
+{
+delete listhead;
+listhead = nullptr;
+}
+Node* secondlast = head();
+Node* last = head();
+while (last->nextptr != head())
+{
+secondlast = last;
+last = last -> nextptr;
+}
+secondlast->setnext(listhead);
+delete last;
+last = nullptr;
+}
+void push_end(int n)
+{
+Node* p = new Node(n);
+if (empty())
+{
+p->setnext(p);
+listhead = p;
+}
+
+Node* last = listhead;
+while (last->nextptr != listhead)
+{
+last = last->nextptr;
+}
+p->setnext(listhead);
+last->setnext(p);
+}
+void insert(int pos,int n)//drwback it will add the number where ever it will get the matching case
+{
+Node* p = new Node(n);
+if(empty())
+{
+p->setnext(p);
+listhead = p;
+}
+Node* ptr = listhead;
+while (ptr->nextptr != listhead)
+{
+if (ptr->retrive() == pos)
+{
+p->setnext(ptr->nextptr);
+ptr->setnext(p);
+}
+ptr = ptr->nextptr;
+}
+}
+};
+int main()
+{
+Circular c1;
+c1.push_front(44);
+c1.push_front(77);
+c1.push_front(66);
+c1.push_front(77);
+c1.push_front(88);
+c1.push_front(99);
+c1.display();
+cout << "\nHead =  " << c1.front() << endl;
+cout << "\nPop at front : ";
+c1.pop_front();
+c1.display();
+cout << "\nHead =  " << c1.front() << endl;
+cout << "\nPop at end : ";
+c1.pop_end();
+c1.display();
+cout << "\nEnd = " << c1.end() << endl;
+cout << "\nPushing at the end : ";
+c1.push_end(12);
+c1.display();
+cout << "\nEnd = " << c1.end() << endl;
+c1.push_end(22);
+c1.display();
+c1.insert(77, 8);
+c1.display();
+}
