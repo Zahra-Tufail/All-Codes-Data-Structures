@@ -1,0 +1,78 @@
+#include<iostream>
+using namespace std;
+void display(int a[1000], int n)
+{
+int tail=n;
+cout << "\n Array after the modification is :\n";
+for (int i = 0; i < tail + 1; i++)
+{
+cout <<"arr["<< i << "] :" << a[i] << endl;
+}
+}
+void ar_head(int a[1000], int t,int h)
+{
+int tail = t;
+int head = h;
+int first;
+cout << "\n Enter any element to be inserted at the head side : ";
+cin >> first;
+tail++;
+for (int i = tail; i >= 0; i--)
+{
+a[i + 1] = a[i];
+}
+a[h] = first;
+display(a, tail);
+
+}
+void ar_tail(int a[1000],int t)
+{
+int tail = t;
+int k;
+cout << "\n Enter any number to be inserted at tail :";
+cin >> k;
+tail++;
+a[tail] = k;
+display(a, tail);
+
+}
+void ar_mid(int a[1000], int t)
+{
+int tail = t;
+int m, ind;
+cout << "\n Enter any element to be inserted: ";
+cin >> m;
+cout << "\n At which index you want to enter the number :";
+cin >> ind;
+tail++;
+for (int j = tail; j >= ind; j--)
+{
+a[j + 1] = a[j];
+}
+a[ind] = m;
+display(a, tail);
+}
+int main()
+{
+int head, tail,n;
+int arr[1000]={0};
+cout << "\n How many numbers you want to enter in the array:";
+cin >> n;
+head = 0;
+tail = n - 1;
+for (int i = 0; i < n; i++)
+{
+cout << "\n Enter number at index [" << i << "] :";
+cin >> arr[i];
+}
+//insertion at head
+ar_head(arr, tail, head);
+tail++;
+//insertion at tail
+ar_tail(arr, tail);
+tail++;
+//insertion at middle
+ar_mid(arr, tail);
+tail++;
+}
+
