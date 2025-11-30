@@ -1,0 +1,222 @@
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class Node
+{
+private:
+    T element;
+    Node<T>* nextptr;
+    Node<T>* prevptr;
+
+public:
+    Node(T i = 0, Node<T>* next = nullptr, Node<T>* prev = nullptr)
+        : element(i), nextptr(next), prevptr(prev) {
+    }
+
+    T retrieve() const { return element; }
+
+    Node<T>* ret_nextptr() { return nextptr; }
+    Node<T>* ret_prevptr() { return prevptr; }
+
+    void setnext(Node<T>* P) { nextptr = P; }
+    void setprev(Node<T>* P) { prevptr = P; }
+
+   template <typename t>
+   friend class Doubly_linked;
+};
+
+template <typename T>
+class Doubly_linked
+{
+private:
+    Node<T>* listhead;
+    Node<T>* tail;
+
+public:
+    Doubly_linked() : listhead(nullptr), tail(nullptr) {}
+
+    bool empty() 
+    {
+        return listhead == nullptr;
+    }
+
+    Node<T>* head() 
+    {
+        return listhead;
+    }
+
+    int size() 
+    {
+        int size = 0;
+        for (Node<T>* p = listhead; p != nullptr; p = p->nextptr)
+        {
+            size++;
+        }
+        return size;
+    }
+
+    int count(T val) 
+    {
+        int c = 0;
+        for (Node<T>* p = listhead; p != nullptr; p = p->nextptr)
+        {
+            if (p->retrieve() == val)
+                c++;
+        }
+        return c;
+    }
+
+    T front()  
+    {
+        if (empty())
+            throw "Underflow";
+
+        return listhead->retrieve();
+    }
+
+    void display()  
+    {
+        for (Node<T>* p = listhead; p != nullptr; p = p->nextptr)
+        {
+            cout << p->retrieve() << "   ";
+        }
+        cout << endl;
+    }
+
+    void push_front(T n)
+    {
+        Node<T>* newN = new Node<T>(n, listhead, nullptr);
+        if (empty())
+        {
+            listhead = tail = newN;
+        }
+        else
+        {
+            listhead->prevptr = newN;
+            listhead = newN;
+        }
+    }
+
+    void push_end(T n)
+    {
+        Node<T>* newN = new Node<T>(n, nullptr, tail);
+        if (empty())
+        {
+            listhead = tail = newN;
+        }
+        else
+        {
+            tail->nextptr = newN;
+            tail = newN;
+        }
+    }
+
+    void insert(T n, T pos)
+    {
+        cout << "\nInserting element " << n << " before element " << pos << ":\n";
+
+        if (empty()) {
+            push_front(n);
+            return;
+        }
+
+        Node<T>* p = listhead;
+        while (p != nullptr && p->retrieve() != pos)
+            p = p->nextptr;
+
+        if (p == nullptr) {
+            push_end(n);
+            return;
+        }
+
+        if (p == listhead) {
+            push_front(n);
+            return;
+        }
+
+        Node<T>* ne = new Node<T>(n, p, p->prevptr);
+        p->prevptr->nextptr = ne;
+        p->prevptr = ne;
+    }
+
+    void pop_front()
+    {
+        if (empty())
+            throw "Underflow";
+
+        Node<T>* ptr = listhead;
+        if (listhead == tail) // only one node
+        {
+            listhead = tail = nullptr;
+        }
+        else
+        {
+            listhead = listhead->nextptr;
+            listhead->prevptr = nullptr;
+        }
+        delete ptr;
+    }
+
+    void pop_end()
+    {
+        if (empty())
+            throw "Underflow";
+
+        Node<T>* ptr = tail;
+        if (listhead == tail) // only one node
+        {
+            listhead = tail = nullptr;
+        }
+        else
+        {
+            tail = tail->prevptr;
+            tail->nextptr = nullptr;
+        }
+        delete ptr;
+    }
+};
+
+int main()
+{
+    Doubly_linked<int> li;
+
+    li.push_front(6);
+    li.push_front(4);
+    li.push_front(3);
+    li.push_front(2);
+    cout << "Initial list:\n";
+    li.display();
+
+    cout << "\nAdding at end:\n";
+    li.push_end(9);
+    li.push_end(8);
+    li.display();
+
+    cout << "\nPopping at the end:\n";
+    li.pop_end();
+    li.push_end(23);
+    li.display();
+
+    cout << "\nPopping at the head:\n";
+    li.pop_front();
+    li.display();
+
+    cout << "\nNow adding elements:\n";
+    li.push_front(12);
+    li.push_end(33);
+    li.display();
+
+    li.insert(88, 9); // insert before 9
+    li.display();
+
+    
+    try {
+        cout << "\nFront element: " << li.front() << endl;
+    }
+    catch (const char* msg) {
+        cout << "Exception: " << msg << endl;
+    }
+
+    return 0;
+}
