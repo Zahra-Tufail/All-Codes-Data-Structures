@@ -19,12 +19,10 @@ public:
     }
     friend class List;
 };
-
 class List
 {
 private:
     Node* head_list = nullptr;
-
 public:
 
     bool empty() const
