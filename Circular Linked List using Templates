@@ -1,0 +1,276 @@
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class Node {
+private:
+    T element;
+    Node<T>* nextptr;
+
+public:
+    Node(T e, Node<T>* next = nullptr) : element(e), nextptr(next) {}
+
+    T retrieve() 
+    { 
+        return element; 
+    }
+
+    Node<T>* r_nextptr()
+    {
+        return nextptr; 
+    }
+    void setnext(Node<T>* n) 
+    {
+        nextptr = n; 
+    }
+
+    template <typename U>
+    friend class Circular;
+};
+
+template <typename T>
+class Circular
+{
+private:
+    Node<T>* listhead = nullptr;
+
+public:
+   
+    bool empty() 
+    {
+        
+        return listhead == nullptr; 
+    }
+
+    Node<T>* head() 
+    {
+        return listhead;
+    }
+
+    T front() 
+    {
+        if (empty())
+            throw "Underflow";
+
+        return listhead->retrieve();
+    }
+
+    T end() 
+    {
+        if (empty())
+            throw "Underflow";
+
+        Node<T>* p = head();
+
+        while (p->nextptr != head())
+            p = p->nextptr;
+        
+        return p->retrieve();
+    }
+
+    void size() 
+    {
+        if (empty())
+        {
+            cout << "\nTotal elements in the list are: 0\n";
+            return;
+        }
+        int c = 0;
+        Node<T>* p = listhead;
+        do
+        {
+            c++;
+            p = p->nextptr;
+        } while (p != listhead);
+        
+        cout << "\nTotal elements in the list are: " << c << endl;
+    }
+
+    void count(T val) 
+    {
+        if (empty()) 
+        {
+            cout << "\nThe list is empty!\n";
+            return;
+        }
+
+        int c = 0;
+        Node<T>* p = listhead;
+        do
+        {
+            if (p->retrieve() == val)
+            {   
+                c++;
+            }
+            p = p->nextptr;
+        } while (p != listhead);
+
+        cout << "\nThe number " << val << " appeared " << c << " times in the list!\n";
+    }
+
+    void display() 
+    {
+        if (empty())
+        {
+            cout << "\nList is empty\n";
+            return;
+        }
+
+        Node<T>* p = listhead;
+     
+        do 
+        {
+            cout << p->retrieve() << "  ";
+            p = p->nextptr;
+        } while (p != listhead);
+
+        cout << endl;
+    }
+
+    void push_front(T n) 
+    {
+        Node<T>* p = new Node<T>(n);
+        if (empty()) 
+        {
+            p->setnext(p);
+            listhead = p;
+            return;
+        }
+        Node<T>* last = listhead;
+        while (last->nextptr != head())
+            last = last->nextptr;
+
+        p->setnext(listhead);
+        last->setnext(p);
+        listhead = p;
+    }
+
+    void push_end(T n) 
+    {
+        Node<T>* p = new Node<T>(n);
+        if (empty()) 
+        {
+            p->setnext(p);
+            listhead = p;
+            return;
+        }
+        Node<T>* last = listhead;
+        while (last->nextptr != listhead)
+            last = last->nextptr;
+
+        p->setnext(listhead);
+        last->setnext(p);
+    }
+
+    void pop_front() 
+    {
+        if (empty())
+            throw "Underflow";
+
+        if (listhead->nextptr == listhead)
+        { // only one node
+            delete listhead;
+            listhead = nullptr;
+            return;
+        }
+
+        Node<T>* last = listhead;
+        while (last->nextptr != head())
+            last = last->nextptr;
+
+        Node<T>* ptr = listhead;
+        listhead = listhead->nextptr;
+        last->setnext(listhead);
+        delete ptr;
+    }
+
+    void pop_end() 
+    {
+        if (empty())
+            throw "Underflow";
+
+        if (listhead->nextptr == listhead)
+        { // only one node
+            delete listhead;
+            listhead = nullptr;
+            return;
+        }
+
+        Node<T>* secondlast = listhead;
+        Node<T>* last = listhead;
+
+        while (last->nextptr != head()) {
+            secondlast = last;
+            last = last->nextptr;
+        }
+
+        secondlast->setnext(listhead);
+        delete last;
+    }
+
+    void insert(T pos, T n) {
+        if (empty()) {
+            push_front(n);
+            return;
+        }
+
+        Node<T>* ptr = listhead;
+        Node<T>* newNode = new Node<T>(n);
+
+        do {
+            if (ptr->retrieve() == pos) 
+            {
+                newNode->setnext(ptr->nextptr);
+                ptr->setnext(newNode);
+                return; // insert only once
+            }
+            ptr = ptr->nextptr;
+        } while (ptr != listhead);
+
+        // If pos not found, add at end
+        push_end(n);
+    }
+};
+
+int main() {
+    Circular<int> c1;
+
+    c1.push_front(44);
+    c1.push_front(77);
+    c1.push_front(66);
+    c1.push_front(77);
+    c1.push_front(88);
+    c1.push_front(99);
+    c1.display();
+
+    cout << "\nHead = " << c1.front() << endl;
+
+    cout << "\nPop at front: ";
+    c1.pop_front();
+    c1.display();
+    cout << "\nHead = " << c1.front() << endl;
+
+    cout << "\nPop at end: ";
+    c1.pop_end();
+    c1.display();
+    cout << "\nEnd = " << c1.end() << endl;
+
+    cout << "\nPushing at the end: ";
+    c1.push_end(12);
+    c1.display();
+    cout << "\nEnd = " << c1.end() << endl;
+
+    c1.push_end(22);
+    c1.display();
+
+    c1.insert(77, 8);
+    c1.display();
+
+    cout << "\nSize of list: ";
+    c1.size();
+
+    cout << "\nCount of 77: ";
+    c1.count(77);
+
+    return 0;
+}
