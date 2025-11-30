@@ -1,0 +1,146 @@
+#include<iostream>
+using namespace std;
+class Queue
+{
+private:
+	int Queue_size; //elements in the array stored
+	int ifront;
+	int iback;
+	int array_capacity; // how many elements can be stored 
+	int* array;
+public:
+	Queue(int n)
+	{
+		Queue_size = 0;
+		ifront = 0;
+		iback = -1;
+		array_capacity = n;
+		array = new int[array_capacity];
+	}
+	~Queue()
+	{
+		delete[] array;
+	}
+
+	bool empty()
+	{
+		return (Queue_size == 0);
+	}
+	int front()
+	{
+
+		if (empty()) {
+
+			throw "Underflow";
+		}
+		return array[ifront];
+	}
+	int back()
+	{
+		if (empty())
+		{
+			throw "Underflow";
+		}
+		return array[iback];
+	}
+	void double_size()
+	{
+		int array2 = 2 * array_capacity;
+		int* new_array = new int[array2];
+		for (int i = ifront; i <= iback; i++)
+		{
+			new_array[i] = array[i];
+		}
+		delete array;
+		array = new_array;
+
+	}
+	void push(int obj)
+	{
+		if (Queue_size == array_capacity)
+		{
+			if (iback == array_capacity)
+			{
+			
+				if (iback != ifront)//will take iback to 0 and fill the spaces untill it reaches to ifront
+				{
+					iback = -1;
+					iback++;
+					array[iback] = obj;
+					Queue_size++;
+				}
+			}
+			else
+			{
+				double_size();
+			}
+		}
+		iback++;
+		array[iback] = obj;
+		Queue_size++;
+	}
+	void pop()
+	{
+		cout << "\nRemoving the element " << array[ifront] << " from the front!\n";
+	
+		Queue_size--;
+		ifront++;
+	}
+	void display()
+	{
+		for (int i = 0; i <= iback; i++)
+		{
+			cout<<array[i]<<"     ";
+		}
+		cout << endl;
+	}
+};
+int main()
+{
+		Queue q(5);
+
+		q.push(1);
+		q.push(2);
+		q.push(3);
+		q.push(10);
+		q.push(20);
+
+		try 
+		{
+			q.pop();
+		}
+		catch (const char* e) 
+		{
+			cout << "Pop error: " << e << endl;
+		}
+
+
+		q.display();
+
+		try 
+		{
+			cout << "Front element is: " << q.front() << endl;
+		}
+		catch (const char* e) 
+		{
+			cout << "Front error: " << e << endl;
+		}
+
+	
+		q.push(10);
+	
+		q.display();
+		try 
+		{
+			cout << "Front element is: " << q.front() << endl;
+		}
+		catch (const char* e)
+		{
+			cout << "Front error: " << e << endl;
+		}
+		
+
+		return 0;
+}
+
+	
